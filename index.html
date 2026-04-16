@@ -9,6 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://img.icons8.com/nolan/64/monitor.png">
+    
+    <!-- Stripe & PayPal SDKs -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AY8_H_vRQbhznTLNBbzeOLYMwkVS1aA16PCtk7ydE7avaGVylzvprh5fpT4KohuF63qK-BXBMnCJ0Gtg&currency=ILS&disable-funding=credit,card"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -179,42 +184,68 @@
 
     <!-- Order Modal (Interactive Form) -->
     <div id="orderModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-6 z-[1000] hidden">
-        <div class="glass p-8 md:p-12 rounded-[3rem] w-full max-w-xl shadow-2xl relative border border-white/10">
+        <div class="glass p-8 md:p-12 rounded-[3rem] w-full max-w-xl shadow-2xl relative border border-white/10 max-h-[90vh] overflow-y-auto">
             <button onclick="toggleModal('orderModal')" class="absolute top-6 right-8 text-gray-500 hover:text-white text-2xl">&times;</button>
             
-            <div class="flex items-center mb-8">
-                <div id="planIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center mr-4 shadow-lg">🎁</div>
-                <div>
-                    <h2 class="text-2xl font-black uppercase tracking-tighter" id="modalPlanTitle">FORFAIT PREMIUM</h2>
-                    <p class="text-xs text-gray-500 uppercase tracking-widest" id="modalPlanPrice">450₪ / an</p>
+            <div id="step-info">
+                <div class="flex items-center mb-8">
+                    <div id="planIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center mr-4 shadow-lg">🎁</div>
+                    <div>
+                        <h2 class="text-2xl font-black uppercase tracking-tighter" id="modalPlanTitle">FORFAIT PREMIUM</h2>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest" id="modalPlanPrice">450₪ / an</p>
+                    </div>
                 </div>
+
+                <form id="orderForm" class="space-y-6">
+                    <input type="hidden" id="formPlanName">
+                    <input type="hidden" id="formPlanPrice">
+                    
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">Identité complète</label>
+                        <input type="text" id="custName" placeholder="Ilan Cohen" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all" required>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">Email de livraison</label>
+                        <input type="email" id="custEmail" placeholder="votre@mail.com" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all" required>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">WhatsApp (Installation 🇮🇱)</label>
+                        <input type="tel" id="custPhone" placeholder="+972 ..." class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all">
+                    </div>
+
+                    <button type="submit" class="w-full py-5 bg-white text-black font-black rounded-2xl hover:bg-premium-blue hover:text-white transition-all shadow-xl uppercase tracking-widest text-sm">
+                        Suivant : Paiement
+                    </button>
+                </form>
             </div>
 
-            <form id="orderForm" class="space-y-6">
-                <input type="hidden" id="formPlanName">
-                <input type="hidden" id="formPlanPrice">
+            <!-- Payment Step -->
+            <div id="step-payment" class="hidden text-center">
+                <h2 class="text-2xl font-black uppercase tracking-tighter mb-2">Choisir le paiement</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-10">Montant à régler : <span id="paymentDisplayPrice" class="text-white font-bold">0₪</span></p>
                 
-                <div class="space-y-2">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">Identité complète</label>
-                    <input type="text" id="custName" placeholder="Ex: Ilan Cohen" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all" required>
-                </div>
+                <div class="space-y-6">
+                    <!-- PayPal Container -->
+                    <div id="paypal-button-container" class="min-h-[150px]"></div>
+                    
+                    <div class="relative py-4">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/5"></div></div>
+                        <div class="relative flex justify-center text-[10px] uppercase text-gray-600 bg-[#020202] px-4">OU PAR CARTE</div>
+                    </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">Email de livraison</label>
-                    <input type="email" id="custEmail" placeholder="ilanhcohen@gmail.com" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all" required>
+                    <!-- Stripe Button -->
+                    <button onclick="payWithStripe()" class="w-full py-5 glass border border-white/10 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white/5 flex items-center justify-center">
+                        <img src="https://img.icons8.com/ios-filled/50/ffffff/visa.png" class="w-6 h-6 mr-3" alt="Visa"/>
+                        Payer par Carte Bancaire
+                    </button>
                 </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">WhatsApp (Pour l'installation 🇮🇱)</label>
-                    <input type="tel" id="custPhone" placeholder="+972 ..." class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all">
-                </div>
-
-                <button type="submit" class="w-full py-5 bg-white text-black font-black rounded-2xl hover:bg-premium-blue hover:text-white transition-all shadow-xl uppercase tracking-widest text-sm">
-                    Valider la commande
-                </button>
-            </form>
+                
+                <button onclick="backToInfo()" class="mt-8 text-[10px] text-gray-500 uppercase hover:text-white transition-all underline">Modifier mes informations</button>
+            </div>
             
-            <p class="text-[8px] text-gray-600 text-center mt-6 uppercase tracking-widest">Paiement sécurisé via StudioEngine Gateway</p>
+            <p class="text-[8px] text-gray-600 text-center mt-10 uppercase tracking-widest">Transaction sécurisée SSL par StudioEngine Industrial</p>
         </div>
     </div>
 
@@ -266,17 +297,58 @@
             toggleModal('orderModal');
         }
 
-        // FORM SUBMISSION
+        // FORM SUBMISSION (Go to payment)
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            document.getElementById('step-info').classList.add('hidden');
+            document.getElementById('step-payment').classList.remove('hidden');
+            document.getElementById('paymentDisplayPrice').innerText = document.getElementById('formPlanPrice').value + "₪";
+            
+            initPayPal();
+        });
+
+        function backToInfo() {
+            document.getElementById('step-info').classList.remove('hidden');
+            document.getElementById('step-payment').classList.add('hidden');
+        }
+
+        // PAYPAL INTEGRATION
+        function initPayPal() {
+            if (document.getElementById('paypal-button-container').innerHTML !== "") return;
+            
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: { value: document.getElementById('formPlanPrice').value }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        finalizeOrder("PayPal");
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+
+        // STRIPE INTEGRATION (Link to Backend Checkout)
+        async function payWithStripe() {
             const name = document.getElementById('custName').value;
             const email = document.getElementById('custEmail').value;
             const amount = document.getElementById('formPlanPrice').value;
             const phone = document.getElementById('custPhone').value;
             
-            // Redirect to success engine
-            window.location.href = `${API_BASE}/iptv/payment-success?name=${encodeURIComponent(name)}&amount=${amount}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
-        });
+            window.location.href = `${API_BASE}/api/iptv/stripe/checkout?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&amount=${amount}&phone=${encodeURIComponent(phone)}`;
+        }
+
+        function finalizeOrder(method) {
+            const name = document.getElementById('custName').value;
+            const email = document.getElementById('custEmail').value;
+            const amount = document.getElementById('formPlanPrice').value;
+            const phone = document.getElementById('custPhone').value;
+            window.location.href = `${API_BASE}/iptv/payment-success?name=${encodeURIComponent(name)}&amount=${amount}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&method=${method}`;
+        }
 
         function toggleModal(id) {
             document.getElementById(id).classList.toggle('hidden');
