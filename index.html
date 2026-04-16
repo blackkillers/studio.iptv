@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudioIPTV | L'Expérience Cinéma en Israël 📺</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/nolan/64/monitor.png">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'iptv-gold': '#FFD700',
+                        'iptv-silver': '#C0C0C0',
+                        'dark-bg': '#020202',
+                        'premium-blue': '#00d2ff',
+                    },
+                    fontFamily: {
+                        'outfit': ['Outfit', 'sans-serif'],
+                        'space': ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020202; color: #ffffff; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-border-gold { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); border: 1px solid rgba(255, 215, 0, 0.3); }
+        .neon-border-silver { box-shadow: 0 0 20px rgba(192, 192, 192, 0.2); border: 1px solid rgba(192, 192, 192, 0.3); }
+        .glow-bg { background: radial-gradient(circle at 50% -20%, #1a1a3a 0%, #020202 80%); }
+        
+        /* Aura Cursor iptv style */
+        #aura {
+            position: fixed; top: 0; left: 0; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.05) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 1; transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body class="selection:bg-premium-blue/30 selection:text-white">
+
+    <div id="aura"></div>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-6 glow-bg z-10">
+        <div class="absolute top-20 w-[60%] h-1 bg-gradient-to-r from-transparent via-premium-blue to-transparent opacity-20"></div>
+        
+        <div class="inline-block px-4 py-1 rounded-full border border-iptv-gold/30 bg-iptv-gold/10 text-iptv-gold text-[10px] font-black tracking-[0.3em] uppercase mb-8 shadow-xl">
+            Saison 2026 - Ultra HD Performance
+        </div>
+        
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 font-space">
+            STUDIO <span class="text-transparent bg-clip-text bg-gradient-to-r from-iptv-gold to-white">IPTV</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-400 max-w-2xl mb-12 font-light">
+            Le futur du divertissement en Israël. <br> 
+            <span class="text-white font-medium">Stabilité européenne, contenu mondial, installation partout en 🇮🇱.</span>
+        </p>
+        
+        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+            <a href="#tarifs" class="px-10 py-5 bg-white text-black font-black rounded-2xl hover:scale-105 transition-all shadow-2xl">VOIR LES OFFRES</a>
+            <a href="https://wa.me/33600000000" target="_blank" class="px-10 py-5 glass rounded-2xl font-bold flex items-center justify-center hover:bg-white/5 transition-all">
+                <img src="https://img.icons8.com/color/48/000000/whatsapp.png" class="w-6 h-6 mr-3" alt="WhatsApp"/>
+                CONTACTER MAINTENANT
+            </a>
+        </div>
+    </header>
+
+    <!-- Pricing Section -->
+    <section id="tarifs" class="py-32 px-6 md:px-12 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Option 1: Premium (Germany) -->
+                <div class="glass p-12 rounded-[3rem] neon-border-gold relative flex flex-col group hover:scale-[1.02] transition-all">
+                    <div class="absolute top-8 right-12 text-4xl">🇩🇪</div>
+                    <div class="mb-10">
+                        <span class="text-xs font-black tracking-widest text-iptv-gold uppercase">Option 🥇 Replay Inclus</span>
+                        <h3 class="text-4xl font-black mt-2 font-space">SERVEUR PREMIUM</h3>
+                        <p class="text-gray-500 mt-2">Haut débit - Replay jusqu'à 7 jours</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-10">
+                        <div class="p-6 bg-white/5 rounded-3xl border border-white/5">
+                            <p class="text-xs text-gray-500 uppercase font-black">1 APPAREIL</p>
+                            <p class="text-3xl font-black mt-1">450₪ <span class="text-xs opacity-50 font-normal">/an</span></p>
+                        </div>
+                        <div class="p-6 bg-iptv-gold/10 rounded-3xl border border-iptv-gold/20">
+                            <p class="text-xs text-iptv-gold uppercase font-black">FAMILLE (3)</p>
+                            <p class="text-3xl font-black mt-1 text-iptv-gold">600₪ <span class="text-xs opacity-50 font-normal text-white">/an</span></p>
+                        </div>
+                    </div>
+                    
+                    <ul class="space-y-4 text-gray-300 text-sm mb-12 flex-grow">
+                        <li class="flex items-center"><span class="mr-3 text-iptv-gold">✦</span> Chaînes TV mondiales en 4K/UHD</li>
+                        <li class="flex items-center"><span class="mr-3 text-iptv-gold">✦</span> Films & Séries (VOD) toutes langues</li>
+                        <li class="flex items-center"><span class="mr-3 text-iptv-gold">✦</span> Fonction Replay (Full Back)</li>
+                        <li class="flex items-center"><span class="mr-3 text-iptv-gold">✦</span> Support technique prioritaire</li>
+                    </ul>
+                    
+                    <button class="w-full py-5 bg-iptv-gold text-black font-black rounded-2xl shadow-lg">CHOISIR LE PREMIUM</button>
+                </div>
+
+                <!-- Option 2: Standard (China) -->
+                <div class="glass p-12 rounded-[3rem] neon-border-silver relative flex flex-col group hover:scale-[1.02] transition-all">
+                    <div class="absolute top-8 right-12 text-4xl">🇨🇳</div>
+                    <div class="mb-10">
+                        <span class="text-xs font-black tracking-widest text-gray-400 uppercase">Option 🥈 L'Essentiel</span>
+                        <h3 class="text-4xl font-black mt-2 font-space">SERVEUR STANDARD</h3>
+                        <p class="text-gray-500 mt-2">Stabilité & Divertissement à prix doux</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-10">
+                        <div class="p-6 bg-white/5 rounded-3xl border border-white/5">
+                            <p class="text-xs text-gray-500 uppercase font-black">1 APPAREIL</p>
+                            <p class="text-3xl font-black mt-1">350₪ <span class="text-xs opacity-50 font-normal">/an</span></p>
+                        </div>
+                        <div class="p-6 bg-white/10 rounded-3xl border border-white/10">
+                            <p class="text-xs text-gray-400 uppercase font-black">FAMILLE (3)</p>
+                            <p class="text-3xl font-black mt-1">500₪ <span class="text-xs opacity-50 font-normal">/an</span></p>
+                        </div>
+                    </div>
+                    
+                    <ul class="space-y-4 text-gray-300 text-sm mb-12 flex-grow">
+                        <li class="flex items-center"><span class="mr-3 text-gray-500">✦</span> Large choix de chaînes mondiales</li>
+                        <li class="flex items-center"><span class="mr-3 text-gray-500">✦</span> Bibliothèque Films & Séries complète</li>
+                        <li class="flex items-center"><span class="mr-3 text-gray-500">✦</span> Qualité HD / Full HD</li>
+                        <li class="flex items-center"><span class="mr-3 text-gray-500">✦</span> Le meilleur rapport qualité/prix</li>
+                    </ul>
+                    
+                    <button class="w-full py-5 glass text-white font-black rounded-2xl hover:bg-white/5 transition-all">CHOISIR LE STANDARD</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="py-20 px-6 md:px-12 bg-zinc-900 z-10 relative">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="p-8">
+                <img src="https://img.icons8.com/nolan/64/android-box.png" class="w-12 h-12 mx-auto mb-4" alt="Box"/>
+                <h4 class="font-bold mb-2">Box Android</h4>
+                <p class="text-xs text-gray-500">Possibilité d'ajouter une Box en supplément.</p>
+            </div>
+            <div class="p-8">
+                <img src="https://img.icons8.com/nolan/64/delivery-fixed.png" class="w-12 h-12 mx-auto mb-4" alt="Installation"/>
+                <h4 class="font-bold mb-2">Installation 🇮🇱</h4>
+                <p class="text-xs text-gray-500">Déplacement partout en Israël pour la mise en service.</p>
+            </div>
+            <div class="p-8">
+                <img src="https://img.icons8.com/nolan/64/customer-support.png" class="w-12 h-12 mx-auto mb-4" alt="SAV"/>
+                <h4 class="font-bold mb-2">Assistance</h4>
+                <p class="text-xs text-gray-500">Service après-vente disponible pour toute question.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 text-center text-[10px] text-gray-600 tracking-widest uppercase mb-20 animate-pulse">
+        StudioIPTV © 2026 - Powered by StudioEngine Industrial Automation
+    </footer>
+
+    <script>
+        // Smooth Cursor Follow
+        const aura = document.getElementById('aura');
+        document.addEventListener('mousemove', (e) => {
+            aura.style.left = e.clientX + 'px';
+            aura.style.top = e.clientY + 'px';
+        });
+    </script>
+</body>
+</html>
