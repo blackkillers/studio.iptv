@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudioIPTV | Accès Impérial 🌑</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #010101; font-family: 'Space Grotesk', sans-serif; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glow { box-shadow: 0 0 50px rgba(0, 242, 255, 0.1); }
+        input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 1rem; padding: 1rem; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; width: 100%; outline: none; transition: all 0.3s; }
+        input:focus { border-color: #00f2ff; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="glass p-12 rounded-[3.5rem] w-full max-w-md text-center glow relative z-10">
+        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl">
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        </div>
+
+        <h1 class="text-3xl font-black mt-10 mb-2 tracking-tighter italic uppercase">GHOST <span class="text-cyan-400">ADMIN</span></h1>
+        <p class="text-gray-500 text-sm mb-12 uppercase tracking-widest font-light">Authentification Requise</p>
+
+        <form id="adminForm" class="space-y-8">
+            <input type="password" id="pin" placeholder="••••" maxlength="4" required autofocus>
+            <button type="submit" class="w-full py-4 bg-white text-black font-black rounded-2xl hover:bg-cyan-400 transition-all uppercase tracking-widest text-sm">Synchroniser</button>
+        </form>
+
+        <p id="error" class="text-red-500 text-xs mt-6 opacity-0 transition-opacity">IDENTIFIANT NON RECONNU</p>
+    </div>
+
+    <script>
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pin = document.getElementById('pin').value;
+            const error = document.getElementById('error');
+            
+            if (pin === '1499') {
+                // Redirection vers le hub fantôme sur Railway
+                window.location.href = `https://web-production-87108.up.railway.app/iptv/ghost-admin-hub?pin=${pin}`;
+            } else {
+                error.classList.remove('opacity-0');
+                document.getElementById('pin').value = '';
+                setTimeout(() => error.classList.add('opacity-0'), 2000);
+            }
+        });
+    </script>
+
+</body>
+</html>
