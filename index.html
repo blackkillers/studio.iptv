@@ -177,9 +177,50 @@
         Direct Support: +972 52 868 3079 | <a href="admin.html" class="opacity-20 hover:opacity-100 transition-all">Console Admin</a>
     </footer>
 
+    <!-- Order Modal (Interactive Form) -->
+    <div id="orderModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-6 z-[1000] hidden">
+        <div class="glass p-8 md:p-12 rounded-[3rem] w-full max-w-xl shadow-2xl relative border border-white/10">
+            <button onclick="toggleModal('orderModal')" class="absolute top-6 right-8 text-gray-500 hover:text-white text-2xl">&times;</button>
+            
+            <div class="flex items-center mb-8">
+                <div id="planIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center mr-4 shadow-lg">🎁</div>
+                <div>
+                    <h2 class="text-2xl font-black uppercase tracking-tighter" id="modalPlanTitle">FORFAIT PREMIUM</h2>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest" id="modalPlanPrice">450₪ / an</p>
+                </div>
+            </div>
+
+            <form id="orderForm" class="space-y-6">
+                <input type="hidden" id="formPlanName">
+                <input type="hidden" id="formPlanPrice">
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">Identité complète</label>
+                    <input type="text" id="custName" placeholder="Ex: Ilan Cohen" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">Email de livraison</label>
+                    <input type="email" id="custEmail" placeholder="ilanhcohen@gmail.com" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-2">WhatsApp (Pour l'installation 🇮🇱)</label>
+                    <input type="tel" id="custPhone" placeholder="+972 ..." class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-premium-blue transition-all">
+                </div>
+
+                <button type="submit" class="w-full py-5 bg-white text-black font-black rounded-2xl hover:bg-premium-blue hover:text-white transition-all shadow-xl uppercase tracking-widest text-sm">
+                    Valider la commande
+                </button>
+            </form>
+            
+            <p class="text-[8px] text-gray-600 text-center mt-6 uppercase tracking-widest">Paiement sécurisé via StudioEngine Gateway</p>
+        </div>
+    </div>
+
     <script>
         const API_BASE = "https://web-production-87108.up.railway.app";
-        const GOOGLE_CLIENT_ID = "562740318749-i83rj55sbh827thj2e13e2ctqpsfd6jn.apps.googleusercontent.com";
+        const GOOGLE_CLIENT_ID = "339802155471-o924uub7pd3m8d9f9it3m0tee5u86l8c.apps.googleusercontent.com";
 
         // TRACKING (Analytic Intelligence)
         async function trackVisit() {
@@ -199,19 +240,46 @@
             } catch (e) { console.warn("Tracking silent failure"); }
         }
 
-        // AUTH LOGIC (Optional here as we use Simulation for Pay)
+        // AUTH LOGIC
         function googleLogin() {
             const redirect = encodeURIComponent(`${API_BASE}/api/auth/google/callback`);
             const scope = encodeURIComponent('openid email profile');
             window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirect}&response_type=code&scope=${scope}&prompt=select_account`;
         }
 
-        // PAYMENT SIMULATION (Direct Empire Order)
-        function processPayment(plan, amount) {
-            const name = prompt("Entrez votre Prénom pour la licence :");
-            if (!name) return;
-            // Redirection vers le moteur de succès qui déclenche Telegram
-            window.location.href = `${API_BASE}/iptv/payment-success?name=${encodeURIComponent(name)}&amount=${amount}&email=ilanhcohen@gmail.com`;
+        // OPEN INTERACTIVE MODAL
+        function openOrderModal(plan, amount) {
+            document.getElementById('modalPlanTitle').innerText = `FORFAIT ${plan.toUpperCase()}`;
+            document.getElementById('modalPlanPrice').innerText = `${amount}₪ / an`;
+            document.getElementById('formPlanName').value = plan;
+            document.getElementById('formPlanPrice').value = amount;
+            
+            const icon = document.getElementById('planIcon');
+            if (plan.toLowerCase() === 'premium') {
+                icon.innerHTML = '🥇';
+                icon.className = 'w-12 h-12 rounded-2xl flex items-center justify-center mr-4 shadow-lg bg-iptv-gold text-black text-2xl';
+            } else {
+                icon.innerHTML = '🥈';
+                icon.className = 'w-12 h-12 rounded-2xl flex items-center justify-center mr-4 shadow-lg bg-gray-400 text-black text-2xl';
+            }
+            
+            toggleModal('orderModal');
+        }
+
+        // FORM SUBMISSION
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const email = document.getElementById('custEmail').value;
+            const amount = document.getElementById('formPlanPrice').value;
+            const phone = document.getElementById('custPhone').value;
+            
+            // Redirect to success engine
+            window.location.href = `${API_BASE}/iptv/payment-success?name=${encodeURIComponent(name)}&amount=${amount}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
+        });
+
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('hidden');
         }
 
         // Smooth Cursor Follow
@@ -226,12 +294,12 @@
     </script>
 
     <script>
-        // Adjust existing buttons to simulate payment
+        // Adjust existing buttons to open modal
         document.querySelectorAll('button').forEach(btn => {
             if (btn.innerText.includes("PREMIUM")) {
-                btn.setAttribute('onclick', "processPayment('Premium', '450')");
+                btn.setAttribute('onclick', "openOrderModal('Premium', '450')");
             } else if (btn.innerText.includes("STANDARD")) {
-                btn.setAttribute('onclick', "processPayment('Standard', '350')");
+                btn.setAttribute('onclick', "openOrderModal('Standard', '350')");
             }
         });
     </script>
