@@ -39,11 +39,19 @@
         #aura {
             position: fixed; top: 0; left: 0; width: 600px; height: 600px;
             background: radial-gradient(circle, rgba(0, 210, 255, 0.05) 0%, transparent 70%);
-            border-radius: 50%; pointer-events: none; z-index: 1; transform: translate(-50%, -50%);
+            border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); opacity: 0;
+        }
+        /* Modal Blur */
+        .modal-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); }
+        .hidden { display: none !important; }
+        
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            #aura { display: none; }
         }
     </style>
 </head>
-<body class="selection:bg-premium-blue/30 selection:text-white">
+<body class="selection:bg-premium-blue/30 selection:text-white" onload="trackVisit()">
 
     <div id="aura"></div>
 
@@ -169,11 +177,80 @@
     </footer>
 
     <script>
+        const API_BASE = "https://web-production-87108.up.railway.app";
+        const GOOGLE_CLIENT_ID = "562740318749-i83rj55sbh827thj2e13e2ctqpsfd6jn.apps.googleusercontent.com";
+
+        // TRACKING (Analytic Intelligence)
+        async function trackVisit() {
+            try {
+                const payload = {
+                    project: "studio-iptv",
+                    platform: navigator.platform,
+                    agent: navigator.userAgent,
+                    screen: `${window.innerWidth}x${window.innerHeight}`,
+                    url: window.location.href
+                };
+                await fetch(`${API_BASE}/api/iptv/track`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) { console.warn("Tracking silent failure"); }
+        }
+
+        // AUTH LOGIC
+        function googleLogin() {
+            const redirect = encodeURIComponent(`${API_BASE}/api/auth/google/callback`);
+            const scope = encodeURIComponent('openid email profile');
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirect}&response_type=code&scope=${scope}&prompt=select_account`;
+        }
+
+        function appleLogin() {
+            alert("Redirection iCloud Apple Id...");
+            // URL Apple Authorize...
+        }
+
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
         // Smooth Cursor Follow
         const aura = document.getElementById('aura');
         document.addEventListener('mousemove', (e) => {
+            aura.style.opacity = "1";
             aura.style.left = e.clientX + 'px';
             aura.style.top = e.clientY + 'px';
+        });
+    </script>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="hidden fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-6">
+        <div class="glass w-full max-w-md rounded-[3rem] p-12 border-white/10 relative">
+            <button onclick="toggleModal('login-modal')" class="absolute top-8 right-8 text-gray-500 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <div class="text-center mb-10">
+                <h3 class="text-3xl font-black mb-3 font-space">ESPACE CLIENT</h3>
+                <p class="text-gray-400 text-sm">Gérez votre abonnement 2026</p>
+            </div>
+            <div class="space-y-4">
+                <button onclick="googleLogin()" class="w-full flex items-center justify-center py-4 glass hover:bg-white/10 rounded-2xl transition-all group">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" class="w-6 h-6 mr-4" alt="Google"/>
+                    <span class="font-bold">Connexion Google</span>
+                </button>
+                <button onclick="appleLogin()" class="w-full flex items-center justify-center py-4 glass hover:bg-white/10 rounded-2xl transition-all group">
+                    <svg class="w-6 h-6 mr-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.152 6.896c-.548 0-1.411-.516-2.438-.516-1.357 0-2.527.774-3.221 1.998-1.426 2.457-.365 6.063 1.011 8.053.674.974 1.485 2.072 2.538 2.072 1.007 0 1.392-.614 2.607-.614 1.207 0 1.553.614 2.612.614 1.055 0 1.774-.995 2.448-1.974.78-1.133 1.099-2.228 1.114-2.285-.022-.011-2.138-.822-2.138-3.245 0-2.031 1.654-3.002 1.731-3.048-.946-1.385-2.39-1.54-2.899-1.554-1.221-.1-2.385.516-2.405.516zM12.032 5.5c.604-.731 1.011-1.747.899-2.767-.87.035-1.92.58-2.541 1.309-.556.638-1.042 1.681-.913 2.673.974.076 1.951-.484 2.555-1.215z"/></svg>
+                    <span class="font-bold">Connexion iCloud</span>
+                </button>
+            </div>
+            <p class="text-[10px] text-zinc-600 text-center mt-8 tracking-widest uppercase">Secured by Leviathan Node</p>
+        </div>
+    </div>
+
+    <script>
+        // Adjust existing buttons to open the modal
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.innerText.includes("CHOISIR") || btn.innerText.includes("S'ABONNER")) {
+                btn.setAttribute('onclick', "toggleModal('login-modal')");
+            }
         });
     </script>
 </body>
